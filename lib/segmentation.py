@@ -6,15 +6,21 @@ from skimage.morphology import rectangle
 
 
 def text_segments(img, min_h=20, max_h=50):
-    gray_scale_img = rgb2gray(img)
-    gray_scale_img /= gray_scale_img.max()
-    gray_scale_img *= 255
+    gray_scale_img = rgb2grayscale(img)
 
     binarized_adaptive_img = threshold_adaptive(gray_scale_img, block_size=40, offset=20)
     dilated = dilation(~binarized_adaptive_img, rectangle(1, 15))
     for segment in extract_segments(dilated.copy()):
         if min_h < height(segment) < max_h:
             yield segment
+
+
+def rgb2grayscale(img):
+    gray_scale_img = rgb2gray(img)
+    gray_scale_img /= gray_scale_img.max()
+    gray_scale_img *= 255
+    return gray_scale_img    
+
 
 
 def height(segment):
